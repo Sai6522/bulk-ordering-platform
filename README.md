@@ -2,6 +2,18 @@
 
 A simple web application for bulk ordering of vegetables and fruits with admin order management.
 
+## 🚀 Live Demo
+
+- **Frontend**: https://bulk-ordering-platform-1.onrender.com
+- **Backend API**: https://bulk-ordering-platform-myx5.onrender.com
+
+## 📱 Quick Test
+Visit the live demo and try:
+1. Browse products in the catalog
+2. Place a test order
+3. Track your order using the Order ID
+4. Check admin panel to see all orders
+
 ## Tech Stack
 
 **Frontend:**
@@ -124,18 +136,28 @@ The application comes with pre-loaded sample products:
 ### Admin Panel
 ![Admin Panel](screenshots/admin.png)
 
-## Deployment
+## 🛠️ Deployment
 
-### Frontend (Vercel/Netlify)
-1. Build the frontend: `cd frontend && npm run build`
-2. Deploy the `build` folder to Vercel or Netlify
-3. Update API URLs in components to point to deployed backend
+### Live Deployment (Render)
+Both frontend and backend are deployed on Render:
+- **Frontend**: https://bulk-ordering-platform-1.onrender.com
+- **Backend**: https://bulk-ordering-platform-myx5.onrender.com
 
-### Backend (Render)
-1. Push code to GitHub
-2. Connect repository to Render
-3. Set build command: `cd backend && npm install`
-4. Set start command: `cd backend && npm start`
+### Deploy Your Own
+
+**Backend (Render):**
+1. Fork this repository
+2. Connect to Render
+3. Set root directory: `backend`
+4. Build command: `npm install`
+5. Start command: `npm start`
+
+**Frontend (Render):**
+1. Create new static site on Render
+2. Set root directory: `frontend`
+3. Build command: `npm install && npm run build`
+4. Publish directory: `build`
+5. Add environment variable: `REACT_APP_API_URL=your-backend-url`
 
 ## Future Enhancements
 
