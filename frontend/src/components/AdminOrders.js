@@ -9,7 +9,8 @@ const AdminOrders = () => {
 
   const fetchOrders = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/admin/orders');
+      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+      const response = await fetch(`${apiUrl}/api/admin/orders`);
       const data = await response.json();
       setOrders(data);
     } catch (error) {
@@ -19,7 +20,8 @@ const AdminOrders = () => {
 
   const updateOrderStatus = async (orderId, newStatus) => {
     try {
-      await fetch(`http://localhost:5000/api/admin/orders/${orderId}`, {
+      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+      await fetch(`${apiUrl}/api/admin/orders/${orderId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: newStatus })
