@@ -2,23 +2,41 @@ import React, { useState, useEffect } from 'react';
 
 const ProductCatalog = ({ onOrderClick }) => {
   const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/products')
-      .then(res => res.json())
-      .then(data => setProducts(data))
-      .catch(err => console.error(err));
+    fetchProducts();
   }, []);
+
+  const fetchProducts = async () => {
+    try {
+      const res = await fetch('http://localhost:5000/api/products');
+      if (!res.ok) throw new Error('Failed to fetch');
+      const data = await res.json();
+      setProducts(data);
+    } catch (err) {
+      setError('Unable to load products');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) return <div className="loading">Loading products...</div>;
+  if (error) return <div className="error">{error}</div>;
 
   return (
     <div className="container">
-      <h2>Product Catalog</h2>
+      <h2>Fresh Produce Catalog</h2>
       <div className="products-grid">
         {products.map(product => (
           <div key={product.id} className="product-card">
             <h3>{product.name}</h3>
-            <p>₹{product.price}/kg</p>
-            <button onClick={() => onOrderClick(product)}>
+            <p className="price">₹{product.price}/kg</p>
+            <button 
+              className="order-btn"
+              onClick={() => onOrderClick(product)}
+            >
               Order Now
             </button>
           </div>

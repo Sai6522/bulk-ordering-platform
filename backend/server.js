@@ -8,6 +8,7 @@ const PORT = process.env.PORT || 5000;
 
 app.use(cors());
 app.use(express.json());
+app.use(express.static('public'));
 
 // Initialize SQLite database
 const db = new sqlite3.Database('./orders.db');
@@ -20,13 +21,15 @@ db.serialize(() => {
     price REAL NOT NULL
   )`);
 
-  db.run(`CREATE TABLE IF NOT EXISTS orders (
+  // Add timestamp to orders
+db.run(`CREATE TABLE IF NOT EXISTS orders (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     product_name TEXT NOT NULL,
     quantity INTEGER NOT NULL,
     buyer_name TEXT NOT NULL,
     delivery_address TEXT NOT NULL,
-    status TEXT DEFAULT 'Pending'
+    status TEXT DEFAULT 'Pending',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
   )`);
 
   // Insert sample products
@@ -49,6 +52,15 @@ app.get('/api/products', (req, res) => {
 
 app.post('/api/orders', (req, res) => {
   const { product_name, quantity, buyer_name, delivery_address } = req.body;
+  
+  // Basic validation
+  if (!product_name || !quantity || !buyer_name || !delivery_address) {
+    return res.status(400).json({ error: 'All fields required' });
+  }
+  
+  if (quantity <= 0) {
+    return res.status(400).json({ error: 'Quantity must be positive' });
+  }
   
   db.run(
     'INSERT INTO orders (product_name, quantity, buyer_name, delivery_address) VALUES (?, ?, ?, ?)',

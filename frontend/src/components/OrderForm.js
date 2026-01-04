@@ -9,9 +9,22 @@ const OrderForm = ({ selectedProduct, onBack }) => {
   });
   const [message, setMessage] = useState('');
   const [orderId, setOrderId] = useState(null);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    if (!formData.quantity || formData.quantity <= 0) {
+      setMessage('Please enter valid quantity');
+      setIsProcessing(false);
+      setIsSuccess(false);
+      return;
+    }
+    
+    setIsProcessing(true);
+    setMessage('Processing order...');
+    
     try {
       const response = await fetch('http://localhost:5000/api/orders', {
         method: 'POST',
@@ -22,13 +35,25 @@ const OrderForm = ({ selectedProduct, onBack }) => {
       
       if (response.ok) {
         setOrderId(data.order_id);
-        setMessage(`Order placed successfully! Your Order ID is: ${data.order_id}`);
-        setFormData({ product_name: '', quantity: '', buyer_name: '', delivery_address: '' });
+        setIsProcessing(false);
+        setIsSuccess(true);
+        setMessage(`Order confirmed! Your Order ID: ${data.order_id}`);
+        // Reset form but keep product name
+        setFormData({ 
+          product_name: selectedProduct?.name || '', 
+          quantity: '', 
+          buyer_name: '', 
+          delivery_address: '' 
+        });
       } else {
-        setMessage('Error placing order');
+        setIsProcessing(false);
+        setIsSuccess(false);
+        setMessage(data.error || 'Failed to place order');
       }
     } catch (error) {
-      setMessage('Error placing order');
+      setIsProcessing(false);
+      setIsSuccess(false);
+      setMessage('Network error. Please try again.');
     }
   };
 
@@ -37,7 +62,11 @@ const OrderForm = ({ selectedProduct, onBack }) => {
       <div className="form-container">
         <h2>Place Order</h2>
         {message && (
-          <div className={orderId ? 'success-message' : 'error-message'}>
+          <div className={
+            isSuccess ? 'success-message' : 
+            isProcessing ? 'processing-message' : 
+            'error-message'
+          }>
             {message}
           </div>
         )}
@@ -49,6 +78,7 @@ const OrderForm = ({ selectedProduct, onBack }) => {
               value={formData.product_name}
               onChange={(e) => setFormData({...formData, product_name: e.target.value})}
               required
+              placeholder="Select a product"
             />
           </div>
           <div className="form-group">
@@ -59,15 +89,18 @@ const OrderForm = ({ selectedProduct, onBack }) => {
               onChange={(e) => setFormData({...formData, quantity: e.target.value})}
               required
               min="1"
+              step="0.5"
+              placeholder="Enter quantity in kg"
             />
           </div>
           <div className="form-group">
-            <label>Buyer Name:</label>
+            <label>Your Name:</label>
             <input
               type="text"
               value={formData.buyer_name}
               onChange={(e) => setFormData({...formData, buyer_name: e.target.value})}
               required
+              placeholder="Enter your full name"
             />
           </div>
           <div className="form-group">
@@ -76,6 +109,8 @@ const OrderForm = ({ selectedProduct, onBack }) => {
               value={formData.delivery_address}
               onChange={(e) => setFormData({...formData, delivery_address: e.target.value})}
               required
+              rows="3"
+              placeholder="Enter complete delivery address"
             />
           </div>
           <button type="submit" className="btn-primary">Place Order</button>

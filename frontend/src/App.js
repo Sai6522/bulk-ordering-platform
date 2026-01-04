@@ -33,11 +33,26 @@ function App() {
   return (
     <div className="App">
       <nav>
-        <h1>Bulk Ordering Platform</h1>
+        <h1>🥬 Bulk Ordering Platform</h1>
         <div>
-          <button onClick={() => setCurrentPage('catalog')}>Products</button>
-          <button onClick={() => setCurrentPage('tracking')}>Track Order</button>
-          <button onClick={() => setCurrentPage('admin')}>Admin</button>
+          <button 
+            onClick={() => setCurrentPage('catalog')}
+            className={currentPage === 'catalog' ? 'active' : ''}
+          >
+            Products
+          </button>
+          <button 
+            onClick={() => setCurrentPage('tracking')}
+            className={currentPage === 'tracking' ? 'active' : ''}
+          >
+            Track Order
+          </button>
+          <button 
+            onClick={() => setCurrentPage('admin')}
+            className={currentPage === 'admin' ? 'active' : ''}
+          >
+            Admin
+          </button>
         </div>
       </nav>
       {renderPage()}
