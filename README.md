@@ -59,7 +59,7 @@ A simple web application for bulk ordering of vegetables and fruits with admin o
 
 1. **Clone the repository:**
 ```bash
-git clone <repository-url>
+git clone https://github.com/Sai6522/bulk-ordering-platform.git
 cd bulk-ordering-platform
 ```
 
