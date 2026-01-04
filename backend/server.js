@@ -6,7 +6,11 @@ const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-app.use(cors());
+// Configure CORS to allow all origins
+app.use(cors({
+  origin: true,
+  credentials: true
+}));
 app.use(express.json());
 app.use(express.static('public'));
 
@@ -42,10 +46,20 @@ db.run(`CREATE TABLE IF NOT EXISTS orders (
     (6, 'Bananas', 40)`);
 });
 
+// Health check endpoint
+app.get('/', (req, res) => {
+  res.json({ message: 'Bulk Ordering Platform API is running!', timestamp: new Date().toISOString() });
+});
+
 // API Routes
 app.get('/api/products', (req, res) => {
+  console.log('GET /api/products requested');
   db.all('SELECT * FROM products', (err, rows) => {
-    if (err) return res.status(500).json({ error: err.message });
+    if (err) {
+      console.error('Database error:', err);
+      return res.status(500).json({ error: err.message });
+    }
+    console.log('Products fetched:', rows.length);
     res.json(rows);
   });
 });
